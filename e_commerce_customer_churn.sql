@@ -232,7 +232,82 @@ GROUP BY warehousetohomerange
 ORDER BY Churnrate DESC ;
 -- Answer = The farther a customer's distance to the warehouse, the higher the likelihood of the customer churning.
 
+-- 6. WHAT IS THE TENURE OF CUSTOMERS WHO CHURNED?
+-- Firstly, we will create a new column that provides a tenure range based on the values in tenure column
+ALTER TABLE ecommercechurn
+ADD TenureRange NVARCHAR(50) ;
 
+UPDATE ecommercechurn
+SET TenureRange =
+CASE 
+    WHEN tenure <= 6 THEN '6 Months'
+    WHEN tenure > 6 AND tenure <= 12 THEN '1 Year'
+    WHEN tenure > 12 AND tenure <= 24 THEN '2 Years'
+    WHEN tenure > 24 THEN 'more than 2 years'
+END ;
 
+-- Finding typical tenure for churned customers
+SELECT TenureRange,
+       COUNT(*) AS TotalCustomer,
+       SUM(Churn) AS CustomerChurn,
+       CAST(SUM(Churn) * 1.0 /COUNT(*) * 100 AS DECIMAL(10,2)) AS Churnrate
+FROM ecommercechurn
+GROUP BY TenureRange
+ORDER BY Churnrate DESC;
+-- Answer = Most customers churned within a 6 months tenure period
 
+-- 6. WHAT PAYMENNT MODE IS MOST FAVORED BY CUSTOMERS?
+SELECT preferredpaymentmode,
+       COUNT(*) AS TotalCustomer,
+       SUM(Churn) AS CustomerChurn,
+       CAST(SUM(Churn) * 1.0 /COUNT(*) * 100 AS DECIMAL(10,2)) AS Churnrate
+FROM ecommercechurn
+GROUP BY preferredpaymentmode
+ORDER BY Churnrate DESC ;
+-- Answer = The most prefered payment mode among churned customers is Cash on Delivery.
 
+-- 7. WHAT IS THE CHURN RATE OF MEN AND WOMEN?
+SELECT gender,
+       COUNT(*) AS TotalCustomer,
+       SUM(Churn) AS CustomerChurn,
+       CAST(SUM(Churn) * 1.0 /COUNT(*) * 100 AS DECIMAL(10,2)) AS Churnrate
+FROM ecommercechurn
+GROUP BY gender
+ORDER BY Churnrate DESC ;
+-- Answer = 18.51% men churned and 17.05% women churned. It can be concluded that men churned more than women.alter
+
+-- 8. DOES CUSTOMERS' NUMBER OF REGISTERED DEVICES AFFECT CHURN?
+SELECT NumberofDeviceRegistered,
+       COUNT(*) AS TotalCustomer,
+       SUM(Churn) AS CustomerChurn,
+       CAST(SUM(Churn) * 1.0 /COUNT(*) * 100 AS DECIMAL(10,2)) AS Churnrate
+FROM ecommercechurn
+GROUP BY NumberofDeviceRegistered
+ORDER BY Churnrate DESC ;
+-- Answer = As the number of registered devices increseas the churn rate also increases.  
+
+-- 9. DOES TIME SPENT ON DEVICES AFFECT CHURN?
+SELECT customerstatus, avg(hourspendonapp) AS AverageHourSpentonApp
+FROM ecommercechurn
+GROUP BY customerstatus ;
+-- Answer = There is no significant difference between the average time spent on the app for churned and non-churned customers
+
+-- 10. WHICH ORDER CATEGORY CHURNED THE MOST?
+SELECT preferedordercat,
+       COUNT(*) AS TotalCustomer,
+       SUM(Churn) AS CustomerChurn,
+       CAST(SUM(Churn) * 1.0 /COUNT(*) * 100 AS DECIMAL(10,2)) AS Churnrate
+FROM ecommercechurn
+GROUP BY preferedordercat
+ORDER BY Churnrate DESC ;
+-- Answer = Mobile phone category has the highest churn rate and grocery has the least churn rate
+
+-- 11. Does the marital status of customers influence churn behavior?
+SELECT maritalstatus,
+       COUNT(*) AS TotalCustomer,
+       SUM(Churn) AS CustomerChurn,
+       CAST(SUM(Churn) * 1.0 /COUNT(*) * 100 AS DECIMAL(10,2)) AS Churnrate
+FROM ecommercechurn
+GROUP BY maritalstatus
+ORDER BY Churnrate DESC ;
+-- Answer = Single customers have the highest churn rate while married customers have the least churn rate
