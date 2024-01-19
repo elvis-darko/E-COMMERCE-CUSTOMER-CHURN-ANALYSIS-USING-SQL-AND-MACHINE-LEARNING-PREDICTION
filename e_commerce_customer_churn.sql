@@ -100,4 +100,18 @@ CASE
 END;
 
 
+-- CREATE NEW COLUMN WITH THE VALUES IN THE CHURN COLUMN
+-- The values in churn column are 0 and 1 values were O means stayed and 1 means churned. I will create a new column 
+-- called customerstatus that shows 'Stayed' and 'Churned' instead of 0 and 1
+ALTER TABLE ecommercechurn
+ADD CustomerStatus NVARCHAR(50);
+
+UPDATE ecommercechurn
+SET CustomerStatus = 
+CASE 
+    WHEN Churn = 1 THEN 'Churned' 
+    WHEN Churn = 0 THEN 'Stayed'
+END ;
+
+
 
