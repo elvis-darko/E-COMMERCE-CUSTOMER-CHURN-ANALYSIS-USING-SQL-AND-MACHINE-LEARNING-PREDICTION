@@ -1,0 +1,16 @@
+streamlit-option-menu
+stqdm
+joblib
+numpy
+pandas
+shap
+streamlit
+scikit-learn==1.2.2
+matplotlib
+shap
+fastapi[all]
+uvicorn
+pydantic
+jinja2
+python-multipart
+qrcode
