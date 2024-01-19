@@ -311,3 +311,36 @@ FROM ecommercechurn
 GROUP BY maritalstatus
 ORDER BY Churnrate DESC ;
 -- Answer = Single customers have the highest churn rate while married customers have the least churn rate
+
+-- 12. Is there any relationship between customer satisfaction scores and churn?
+SELECT satisfactionscore,
+       COUNT(*) AS TotalCustomer,
+       SUM(Churn) AS CustomerChurn,
+       CAST(SUM(Churn) * 1.0 /COUNT(*) * 100 AS DECIMAL(10,2)) AS Churnrate
+FROM ecommercechurn
+GROUP BY satisfactionscore
+ORDER BY Churnrate DESC ;
+-- Answer = Customer satisfaction score of 5 has the highest churn rate, satisfaction score of 1 has the least churn rate
+
+-- 13. Does customer complaints influence churned behavior?
+SELECT complainrecieved,
+       COUNT(*) AS TotalCustomer,
+       SUM(Churn) AS CustomerChurn,
+       CAST(SUM(Churn) * 1.0 /COUNT(*) * 100 AS DECIMAL(10,2)) AS Churnrate
+FROM ecommercechurn
+GROUP BY complainrecieved
+ORDER BY Churnrate DESC ;
+-- Answer = Customers with complains had the highest churn rate
+
+-- 14. What is the average number of days since the last order for churned customers?
+SELECT AVG(daysincelastorder) AS AverageNumofDaysSinceLastOrder
+FROM ecommercechurn
+WHERE customerstatus = 'churned' ;
+-- Answer = The average number of days since last order for churned customer is 3
+
+-- 15. How does the usage of coupons differ between churned and non-churned customers?
+SELECT customerstatus, SUM(couponused) AS SumofCouponUsed
+FROM ecommercechurn
+GROUP BY customerstatus ;
+-- Churned customers used less coupons in comparison to non churned customers
+
