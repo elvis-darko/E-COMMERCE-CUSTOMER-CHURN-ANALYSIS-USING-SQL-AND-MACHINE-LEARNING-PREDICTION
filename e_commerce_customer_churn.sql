@@ -103,6 +103,7 @@ END;
 -- CREATE NEW COLUMN WITH THE VALUES IN THE CHURN COLUMN
 -- The values in churn column are 0 and 1 values were O means stayed and 1 means churned. I will create a new column 
 -- called customerstatus that shows 'Stayed' and 'Churned' instead of 0 and 1
+
 ALTER TABLE ecommercechurn
 ADD CustomerStatus NVARCHAR(50);
 
@@ -112,6 +113,73 @@ CASE
     WHEN Churn = 1 THEN 'Churned' 
     WHEN Churn = 0 THEN 'Stayed'
 END ;
+
+
+-- CHECK COLUMN VALUES FOR ACCURACY AND CONSISTENCY
+
+-- a) check distinct value in warehousetohome column
+SELECT DISTINCT warehousetohome
+FROM ecommercechurn;
+-- I can see two values 126 and 127 that are outliers, it could be a data entry error, so I will correct it to 26 & 27 respectively
+-- Replace value 127 with 27
+
+-- ) Replace value 126 with 26
+UPDATE ecommercechurn
+SET warehousetohome = '26'
+WHERE warehousetohome = '126';
+
+UPDATE ecommercechurn
+SET warehousetohome = '27'
+WHERE warehousetohome = '127' ;
+
+
+-- b) Check distinct values for preferedordercat column
+select distinct preferedordercat 
+from ecommercechurn ;
+
+-- The result shows mobile phone and mobile, so I replace mobile with mobile phone
+-- Replace mobile with mobile phone
+
+UPDATE ecommercechurn
+SET preferedordercat = 'Mobile Phone'
+WHERE Preferedordercat = 'Mobile' ;
+
+-- c) Check distinct values for preferredlogindevice column
+select distinct preferredlogindevice 
+from ecommercechurn ;
+
+-- The result shows phone and mobile phone which indicates the same thing, so I will replace mobile phone with phone
+--  Replace mobile phone with phone
+
+UPDATE ecommercechurn
+SET preferredlogindevice = 'phone'
+WHERE preferredlogindevice = 'mobile phone';
+
+-- d) Check distinct values for preferredpaymentmode column
+select distinct PreferredPaymentMode 
+from ecommercechurn ;
+
+-- The result shows Cash on Delivery and COD which mean the same thing, so I replace COD with Cash on Delivery
+-- Replace mobile with mobile phone
+
+UPDATE ecommercechurn
+SET PreferredPaymentMode  = 'Cash on Delivery'
+WHERE PreferredPaymentMode  = 'COD';
+
+
+/*************************************
+DATA EXPLORATION
+*************************************/
+
+-- 1. WHAT IS THE TOTAL NUMBER OF CUSTOMERS
+SELECT DISTINCT COUNT(CustomerID) as TotalNumberOfCustomers
+FROM ecommercechurn 
+-- Answer = There are 5,630 customers 
+
+
+
+
+
 
 
 
