@@ -86,3 +86,18 @@ SET ordercount = (SELECT AVG(ordercount) FROM ecommercechurn)
 WHERE ordercount IS NULL ;
 
 
+ -- CREATE NEW COLUMN FROM THE COMPLAIN COLUMN
+-- The values in complain column are 0 and 1 values where O means No and 1 means Yes. I will create a new column 
+-- called complainrecieved that shows 'Yes' and 'No' instead of 0 and 1  
+ALTER TABLE ecommercechurn
+ADD ComplainRecieved NVARCHAR(10);
+
+UPDATE ecommercechurn
+SET ComplainRecieved =  
+CASE 
+    WHEN complain = 1 THEN 'Yes'
+    WHEN complain = 0 THEN 'No'
+END;
+
+
+
