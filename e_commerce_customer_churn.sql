@@ -173,10 +173,20 @@ DATA EXPLORATION
 
 -- 1. WHAT IS THE TOTAL NUMBER OF CUSTOMERS
 SELECT DISTINCT COUNT(CustomerID) as TotalNumberOfCustomers
-FROM ecommercechurn 
--- Answer = There are 5,630 customers 
+FROM ecommercechurn ;
+-- Answer = There are 4,293 customers 
 
-
+-- 1. What is the overall customer churn rate?
+SELECT TotalNumberofCustomers, 
+       TotalNumberofChurnedCustomers,
+       CAST((TotalNumberofChurnedCustomers * 1.0 / TotalNumberofCustomers * 1.0)*100 AS DECIMAL(10,2)) AS ChurnRate
+FROM
+(SELECT COUNT(*) AS TotalNumberofCustomers
+FROM ecommercechurn) AS Total,
+(SELECT COUNT(*) AS TotalNumberofChurnedCustomers
+FROM ecommercechurn
+WHERE CustomerStatus = 'churned') AS Churned ;
+-- Answer = The Churn rate is 17.94%
 
 
 
