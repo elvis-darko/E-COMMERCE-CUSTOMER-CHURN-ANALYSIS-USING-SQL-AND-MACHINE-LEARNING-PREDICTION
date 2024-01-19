@@ -176,7 +176,7 @@ SELECT DISTINCT COUNT(CustomerID) as TotalNumberOfCustomers
 FROM ecommercechurn ;
 -- Answer = There are 4,293 customers 
 
--- 1. What is the overall customer churn rate?
+-- 2. WHAT PERCENTAGE OF CUSTOMERS CHURNED?
 SELECT TotalNumberofCustomers, 
        TotalNumberofChurnedCustomers,
        CAST((TotalNumberofChurnedCustomers * 1.0 / TotalNumberofCustomers * 1.0)*100 AS DECIMAL(10,2)) AS ChurnRate
@@ -188,6 +188,49 @@ FROM ecommercechurn
 WHERE CustomerStatus = 'churned') AS Churned ;
 -- Answer = The Churn rate is 17.94%
 
+-- 3. WHAT IS THE DISTRIBUTION OF CUSTOMERS ACCORDING TO THE CITY TIERS COLUMN?
+SELECT citytier, 
+       COUNT(*) AS TotalCustomer, 
+       SUM(Churn) AS ChurnedCustomers, 
+       CAST(SUM(churn) * 1.0 / COUNT(*) * 100 AS DECIMAL(10,2)) AS ChurnRate
+FROM ecommercechurn
+GROUP BY citytier
+ORDER BY churnrate DESC;
+-- Answer = citytier3 has the highest churn rate, followed by citytier2 and then citytier1 has the least churn rate.
+
+-- 3. WHAT IS THE DISTRIBUTION OF PREFERRED LOGIN WITH REGARDS TO CHURNING?
+SELECT preferredlogindevice, 
+        COUNT(*) AS TotalCustomers,
+        SUM(churn) AS ChurnedCustomers,
+        CAST(SUM(churn) * 1.0 / COUNT(*) * 100 AS DECIMAL(10,2)) AS ChurnRate
+FROM ecommercechurn
+GROUP BY preferredlogindevice ;
+-- Answer = The prefered login devices are computer and phone. Computer accounts for the highest churnrate with 20.66% and 
+-- phone with 16.79%. 
+
+-- 5. ASCERTAIN CORRELATION BETWEEN WAREHOUSE-TO-HOME AND CUSTOMER ATTRITION?
+-- Firstly, we will create a new column that provides a distance range based on the values in warehousetohome column
+ALTER TABLE ecommercechurn
+ADD warehousetohomerange NVARCHAR(50) ;
+
+UPDATE ecommercechurn
+SET warehousetohomerange =
+CASE 
+    WHEN warehousetohome <= 10 THEN 'Very close distance'
+    WHEN warehousetohome > 10 AND warehousetohome <= 20 THEN 'Close distance'
+    WHEN warehousetohome > 20 AND warehousetohome <= 30 THEN 'Moderate distance'
+    WHEN warehousetohome > 30 THEN 'Far distance'
+END ;
+
+-- Finding correlation between warehousetohome and churnrate
+SELECT warehousetohomerange,
+       COUNT(*) AS TotalCustomer,
+       SUM(Churn) AS CustomerChurn,
+       CAST(SUM(Churn) * 1.0 /COUNT(*) * 100 AS DECIMAL(10,2)) AS Churnrate
+FROM ecommercechurn
+GROUP BY warehousetohomerange
+ORDER BY Churnrate DESC ;
+-- Answer = The farther a customer's distance to the warehouse, the higher the likelihood of the customer churning.
 
 
 
